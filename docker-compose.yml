@@ -1,0 +1,35 @@
+version: '3.7'
+
+services :
+
+  db:
+    image: postgres:12-alpine
+    ports:
+      - "5433:5432"
+    env_file:
+      - .env
+    networks:
+      - main
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data/
+
+  web:
+    build:
+      context: .
+      dockerfile: build/docker/Dockerfile
+    volumes:
+      - .:/code
+    ports:
+      - "82:82"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - main
+
+networks:
+  main:
+
+volumes:
+  db:

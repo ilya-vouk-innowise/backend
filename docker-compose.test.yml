@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: postgres:12-alpine
+    ports:
+      - "5433:5432"
+    env_file:
+      - .test_env
+    networks:
+      - main
+    volumes:
+      - ./test_data/postgres:/var/lib/postgresql/data/
+
+  web:
+    container_name: 'test-web'
+    build:
+      context: .
+      dockerfile: build/docker/test.Dockerfile
+    volumes:
+      - .:/code
+    ports:
+      - "82:80"
+    env_file:
+      - .test_env
+    depends_on:
+      - db
+      - localstack
+    networks:
+      - main
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    networks:
+      - main
+    environment:
+      - SERVICES=s3
+      - AWS_DEFAULT_REGION=us-east-1
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    env_file:
+      - .test_env
+
+networks:
+  main:
+
+volumes:
+  db:

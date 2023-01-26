@@ -1,0 +1,19 @@
+[flake8]
+exclude = (
+    .git,
+    __pycache__,
+    migrations,
+    venv,
+    .idea,
+)
+per-file-ignores = __init__.py: F401
+
+max-complexity = 12
+max-line-length = 120
+enable-extensions=max-function-length
+max-function-length=30
+
+radon-max-cc = 7
+radon-no-assert = true
+
+ignore = W291,W503,E303,E711,E712,E203
